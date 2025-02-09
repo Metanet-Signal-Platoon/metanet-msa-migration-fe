@@ -95,7 +95,7 @@ function Community() {
             </S.ListItem>
           ))
         ) : (
-          <p>동호회 목록을 불러오는 중입니다…</p>
+          <p>목록을 불러오는 중입니다…</p>
         )}
         </S.ListContainer>
 

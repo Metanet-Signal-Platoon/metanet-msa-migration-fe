@@ -15,7 +15,7 @@ FROM nginx:alpine
 RUN apk add --no-cache bash gettext
 
 # Nginx 설정 파일 템플릿 복사
-COPY default.conf.template /etc/nginx/conf.d/default.conf.template
+COPY default.conf.template /etc/nginx/conf.d/default.conf
 
 # 빌드된 React 파일을 Nginx의 정적 파일 경로로 복사
 COPY --from=builder /app/build /usr/share/nginx/html

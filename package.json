@@ -53,5 +53,6 @@
     "ajv": "^7.2.4",
     "typescript": "^5.7.2"
   },
-  "homepage": "."
+  "homepage": ".",
+  "proxy": "https://20.214.117.134"
 }
