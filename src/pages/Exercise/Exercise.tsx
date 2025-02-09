@@ -10,10 +10,9 @@ function Exercise() {
   const navigation = useNavigate();
 
   const [reason, setReason] = useState("");
-  const [exerciseName, setExerciseName] = useState("'오늘의 시사경제 Quiz 시작하기'");
+  const [exerciseName, setExerciseName] = useState("오늘의 금융 Quiz");
 
   useEffect(() => {
-
     axios
       .get('/ftness/reco_model', {
         headers: {
