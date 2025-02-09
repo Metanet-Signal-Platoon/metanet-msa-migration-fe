@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "${{ secrets.HARBOR_CA_CERT }}" > harbor-ca.crt
           sudo cp harbor-ca.crt /usr/local/share/ca-certificates/harbor-ca.crt
-          sudo update-ca-certificates || true
+          sudo update-ca-certificates
           # 인증서 설치 확인 (선택 사항)
           grep -i "harbor-ca" /etc/ssl/certs/ca-certificates.crt
 
