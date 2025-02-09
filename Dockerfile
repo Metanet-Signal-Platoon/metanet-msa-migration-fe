@@ -23,4 +23,4 @@ COPY --from=builder /app/build /usr/share/nginx/html
 EXPOSE 80
 
 # 환경 변수 적용 후 변환 (Runtime에 실행)
-CMD ["sh", "-c", "envsubst '$BACKEND_URL' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && cat /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["sh", "-c", "envsubst '$BACKEND_URL' /etc/nginx/conf.d/default.conf && cat /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
