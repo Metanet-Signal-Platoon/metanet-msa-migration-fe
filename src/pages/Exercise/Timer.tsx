@@ -4,6 +4,8 @@ import * as S from './Timer.style';
 import Footer from '../../components/Footer/Footer';
 import { useRecoilValue } from 'recoil';
 import { ExerciseNameAtom } from '../../recoil/ExerciseAtoms';
+import { backApi } from '../../api/axios';
+import axios from 'axios';
 
 function CircularTimer({ duration, onComplete, isAnimated = true }) {
   const [timeLeft, setTimeLeft] = useState(duration);
@@ -58,7 +60,7 @@ function CircularTimer({ duration, onComplete, isAnimated = true }) {
           }}
         />
       </svg>
-      <S.TimeText>{timeLeft}초</S.TimeText>
+      {/* <S.TimeText>{timeLeft}초</S.TimeText> */}
     </div>
   );
 }
@@ -70,24 +72,63 @@ function Timer() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState(null); // 선택된 버튼 상태
   const exerciseName = useRecoilValue(ExerciseNameAtom);
-  const [quizResult, setQuizResult] = useState(null);
-
+  const [quizList, setQuizList] = useState([]);
+  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   
+
   const handleAnswer = (answer) => {
-    // O/X 정답 여부를 판단 (기본적으로 O가 정답으로 가정)
-    setQuizResult(answer === 'O');
-    setTimeout(() => {
-      setStage('rest');
-      setTimeLeft(7);
-    }, 2000);
+    const correctAnswer = quizList[currentQuizIndex].answer;
+
+    if(answer === correctAnswer){
+      setCorrectCount((prev)=>prev+1);
+    }
+    if (currentQuizIndex < quizList.length - 1) {
+      setTimeout(() => {
+        setCurrentQuizIndex((prev) => prev + 1); // 🔥 다음 문제로 이동
+      }, 1000);
+    } else {
+      setStage('finished'); // 🔥 모든 문제를 풀면 종료 화면으로 전환
+    }
   };
   
   const handleClick = (choice) => {
     setSelected(choice); // 선택 상태 업데이트
   };
 
+  useEffect(()=>{
+    backApi
+    .get('/quiz')
+    .then((response) => {
+      const data = response.data.respone;
+      console.log(data);
+      setQuizList(data);
+    })
+    .catch((error) => {
+      console.error('데이터 로딩 실패:', error);
+    });
+}, []);
+
+// 로컬 api 테스트트
+useEffect(() => {
+  const fetchQuiz = async () => {
+    try {
+      const response = await axios.get('http://localhost:8081/quiz'); // 🟢 API 호출
+      if (response.data.success) {
+        setQuizList(response.data.response); // 🟢 퀴즈 데이터 저장
+      }
+    } catch (error) {
+      console.error('Error fetching quiz:', error);
+    }
+  };
+
+  fetchQuiz();
+}, []); // 처음 한 번만 실행
+
+  
   // 시작 전 인스로 텍스트 & 3초 타이머
   useEffect(() => {
+    
     if (stage === 'intro') {
       const timeout = setTimeout(() => {
         setStage('countdown'); // 3초 카운트다운으로 전환
@@ -101,7 +142,7 @@ function Timer() {
         return () => clearTimeout(countdown);
       } else {
         setStage('exercise');
-        setTimeLeft(7);
+        setTimeLeft(15);
       }
     }
   }, [stage, timeLeft]);
@@ -110,15 +151,7 @@ function Timer() {
     if (stage === 'exercise') {
       setStage('rest');
       setTimeLeft(2); // 휴식 시간 초기화
-    } else if (stage === 'rest') {
-      if (cycleCount < 2) {
-        setCycleCount(cycleCount + 1);
-        setStage('exercise');
-        setTimeLeft(7); 
-      } else {
-        setStage('finished');
-      }
-    }
+    } 
   };
 
   return (
@@ -129,16 +162,18 @@ function Timer() {
         // <div>
           <S.QuizBox>
           <S.ExerciseName>'{exerciseName}'</S.ExerciseName>
-          <S.SetBox>SET {cycleCount + 1}</S.SetBox>
+          <S.SetBox>
+            문제 {currentQuizIndex + 1} / {quizList.length}
+          </S.SetBox>
           <S.ExerciseBox>
-            다음 중 맞으면 O, 틀리면 X를 눌러주세요.
+            {quizList[currentQuizIndex].question}
           </S.ExerciseBox>
           <div style={{display: 'flex', justifyContent: 'center', padding: '30px'}}>
-            <S.QuizButton onClick={() => handleAnswer('O')}>⭕</S.QuizButton>
-            <S.QuizButton onClick={() => handleAnswer('X')}>❌</S.QuizButton>
+            <S.QuizButton onClick={() => handleAnswer('1번(O)')}>⭕</S.QuizButton>
+            <S.QuizButton onClick={() => handleAnswer('2번(X)')}>❌</S.QuizButton>
           </div>
           <S.CircleTimer>
-            <CircularTimer duration={7} onComplete={handleComplete} isAnimated={true} />
+            <CircularTimer duration={15} onComplete={handleComplete} isAnimated={true} />
           </S.CircleTimer>
         {/* </div> */}
         </S.QuizBox> 
@@ -147,7 +182,7 @@ function Timer() {
       {stage === 'rest' && 
         <div>
           <S.ExerciseName>'{exerciseName}'</S.ExerciseName>
-          <S.SetBox>SET {cycleCount + 1}</S.SetBox>
+          <S.SetBox>SET {currentQuizIndex + 1}</S.SetBox>
           <S.ExerciseBox>
             준비하세요!
           </S.ExerciseBox>
@@ -158,7 +193,9 @@ function Timer() {
       }
       {stage === 'finished' && (
         <div>
-          <S.Finish>퀴즈가 종료되었습니다.<br/>추천한 퀴즈가 어땠나요?</S.Finish>
+          <S.Finish>퀴즈가 종료되었습니다. 
+            <br/>맞춘 개수: {correctCount}/{quizList.length}
+            <br/>추천한 퀴즈가 어땠나요?</S.Finish>
           <S.ChoiceBox>
             <S.ChoiceButton
               isSelected={selected === 'bad'}
