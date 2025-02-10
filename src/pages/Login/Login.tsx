@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // axios import
 import Cookies from 'js-cookie'; // js-cookie import
 import * as S from './Login.style';
+import { backApi } from '../../api/axios';
 
 function Login() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Login() {
     formData.append('password', password); // password 추가
 
     // 로그인 요청
-    axios
+      backApi
       .post('/login', formData)
       .then((response) => {
         const accessToken = response.headers['access']; // 예시: "Bearer token"
@@ -25,7 +26,7 @@ function Login() {
         localStorage.setItem('access', accessToken);
 
         //user index 가져오기
-        axios
+      backApi
         .get('/user/user_index', {
           headers: {
             access: localStorage.getItem('access'), // Bearer 토큰 포함

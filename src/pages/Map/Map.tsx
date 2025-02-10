@@ -7,6 +7,7 @@ import Marker from '../../assets/Marker.svg'; // 현위치 아이콘
 import { Map as KakaoMap, useMap, MapMarker } from 'react-kakao-maps-sdk';
 import debounce from 'lodash/debounce';
 import Papa from 'papaparse';
+import {backApi} from "../../api/axios";
 
 const { kakao } = window;
 
@@ -53,8 +54,8 @@ function Map() {
         } else {
           url = `/api/real-estate`;
         }
-
-        const response = await fetch(url);
+        const fullurl = `${backApi}${url}`;
+        const response = await fetch(fullurl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
