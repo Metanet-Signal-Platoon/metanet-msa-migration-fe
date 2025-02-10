@@ -51,3 +51,4 @@ jobs:
           context: .
           push: true
           tags: harbor.20.214.117.134.nip.io/metabank/msa-front:latest
+          
