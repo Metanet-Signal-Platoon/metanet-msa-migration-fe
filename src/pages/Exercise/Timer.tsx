@@ -100,30 +100,29 @@ function Timer() {
     backApi
     .get('/quiz')
     .then((response) => {
-      const data = response.data.respone;
-      console.log(data);
-      setQuizList(data);
+      console.log('Quiz 데이터:', response.data);
+      setQuizList(response.data);
     })
     .catch((error) => {
-      console.error('데이터 로딩 실패:', error);
+      console.error('데이터 로딩 실패:', error.response ? error.response.data : error);
     });
 }, []);
 
 // 로컬 api 테스트트
-useEffect(() => {
-  const fetchQuiz = async () => {
-    try {
-      const response = await axios.get('http://localhost:8081/quiz'); // 🟢 API 호출
-      if (response.data.success) {
-        setQuizList(response.data.response); // 🟢 퀴즈 데이터 저장
-      }
-    } catch (error) {
-      console.error('Error fetching quiz:', error);
-    }
-  };
+// useEffect(() => {
+//   const fetchQuiz = async () => {
+//     try {
+//       const response = await axios.get('http://localhost:8081/quiz'); // 🟢 API 호출
+//       if (response.data.success) {
+//         setQuizList(response.data.response); // 🟢 퀴즈 데이터 저장
+//       }
+//     } catch (error) {
+//       console.error('Error fetching quiz:', error);
+//     }
+//   };
 
-  fetchQuiz();
-}, []); // 처음 한 번만 실행
+//   fetchQuiz();
+// }, []); // 처음 한 번만 실행
 
   
   // 시작 전 인스로 텍스트 & 3초 타이머
