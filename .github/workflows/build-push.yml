@@ -22,6 +22,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      # Harbor 자체 서명 CA 인증서 설치
+      - name: Install Harbor CA Certificate
+        run: |
+          echo "${{ secrets.HARBOR_CA_CERT }}" > harbor-ca.crt
+          sudo cp harbor-ca.crt /usr/local/share/ca-certificates/harbor-ca.crt
+          # update-ca-certificates 실행 후, 오류가 있더라도 exit code 0으로 처리
+          sudo update-ca-certificates || { echo "update-ca-certificates failed, but ignoring the error."; exit 0; }
+          # (선택) 설치된 인증서 확인
+          grep -i "harbor-ca" /etc/ssl/certs/ca-certificates.crt || true
+        shell: bash
+
       # Harbor 레지스트리에 로그인
       - name: Login to Harbor Registry
         uses: docker/login-action@v2
@@ -39,4 +50,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: harbor.20.214.117.134.nip.io/frontend/msa-front:latest
+          tags: harbor.20.214.117.134.nip.io/metabank/msa-front:latest
+          
