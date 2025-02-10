@@ -50,14 +50,14 @@ function Map() {
       try {
         let url = "";
         if (selectedOption === "bank") {
-          url = `/api/locations`;
+          url = `http://20.214.117.134/api/locations`;
         } else {
-          url = `/api/real-estate`;
+          url = `http://20.214.117.134/api/real-estate`;
         }
         // backApi()가 Promise를 반환하므로 await를 사용하여 문자열을 얻습니다.
-        const baseurl = await backApi();
-        const fullurl = `${baseurl}${url}`;
-        const response = await fetch(fullurl);
+        //const baseurl = await backApi();
+        //const fullurl = `${baseurl}${url}`;
+        const response = await fetch(url);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
