@@ -100,11 +100,11 @@ function Timer() {
     backApi
     .get('/quiz')
     .then((response) => {
-      console.log('Quiz 데이터:', response.data);
-      setQuizList(response.data);
+      console.log('Quiz 데이터:', response.data.response);
+      setQuizList(response.data.response);
     })
     .catch((error) => {
-      console.error('데이터 로딩 실패:', error.response ? error.response.data : error);
+      console.error('데이터 로딩 실패:', error);
     });
 }, []);
 
