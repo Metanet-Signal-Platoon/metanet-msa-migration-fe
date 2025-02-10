@@ -7,7 +7,7 @@ import Marker from '../../assets/Marker.svg'; // 현위치 아이콘
 import { Map as KakaoMap, useMap, MapMarker } from 'react-kakao-maps-sdk';
 import debounce from 'lodash/debounce';
 import Papa from 'papaparse';
-import {backApi} from "../../api/axios";
+import { backApi } from "../../api/axios"; // backApi가 Promise를 반환하는 함수라고 가정
 
 const { kakao } = window;
 
@@ -54,7 +54,8 @@ function Map() {
         } else {
           url = `/api/real-estate`;
         }
-        const baseurl = backApi();
+        // backApi()가 Promise를 반환하므로 await를 사용하여 문자열을 얻습니다.
+        const baseurl = await backApi();
         const fullurl = `${baseurl}${url}`;
         const response = await fetch(fullurl);
         if (!response.ok) {
@@ -78,8 +79,6 @@ function Map() {
 
     fetchData();
   }, [selectedOption]);
-
-
 
   useEffect(() => {
     const handlePosition = (pos) => {
@@ -119,134 +118,120 @@ function Map() {
   };
 
   const updateCenterWhenMapMoved = useMemo(
-    () => debounce((map) => {
-      const newCenter = map.getCenter();
-      const latitude = newCenter.getLat();
-      const longitude = newCenter.getLng();
-      setCenter({ lat: latitude, lng: longitude });
-    }, 500),
-    []
+      () => debounce((map) => {
+        const newCenter = map.getCenter();
+        const latitude = newCenter.getLat();
+        const longitude = newCenter.getLng();
+        setCenter({ lat: latitude, lng: longitude });
+      }, 500),
+      []
   );
 
   return (
-    <div>
-      <Header text="전세 대출 저희가 도와드릴께요 !!!" />
-      <div style={{ display: 'flex', padding: '80px 0px 0px 20px' }}>
-        <S.Select
-          onClick={() => setSelectedOption('bank')}
-          selected={selectedOption === 'bank'}
-        >
-          은행 위치
-        </S.Select>
-        <S.Select
-          onClick={() => setSelectedOption('mount')}
-          selected={selectedOption === 'mount'}
-        >
-          부동산 위치
-        </S.Select>
-      </div>
-      <S.MapTitle>
-        {selectedOption === 'mount' ? (
-          <>
-            <text style={{ fontSize: '25px', fontWeight: '600' }}>{address}</text>
-            <br />
-            중심으로 부동산 위치를 찾았어요!
-          </>
-        ) : (
-          <>
-            {address ? (
+      <div>
+        <Header text="전세 대출 저희가 도와드릴께요 !!!" />
+        <div style={{ display: 'flex', padding: '80px 0px 0px 20px' }}>
+          <S.Select
+              onClick={() => setSelectedOption('bank')}
+              selected={selectedOption === 'bank'}
+          >
+            은행 위치
+          </S.Select>
+          <S.Select
+              onClick={() => setSelectedOption('mount')}
+              selected={selectedOption === 'mount'}
+          >
+            부동산 위치
+          </S.Select>
+        </div>
+        <S.MapTitle>
+          {selectedOption === 'mount' ? (
               <>
-                <text style={{ fontSize: '25px', fontWeight: '600' }}>{address}</text>
+                <span style={{ fontSize: '25px', fontWeight: '600' }}>{address}</span>
                 <br />
-                중심으로 필요한 정보가 있는 은행을 찾았어요!
+                중심으로 부동산 위치를 찾았어요!
               </>
-            ) : (
-              '주소를 가져오는 중입니다!'
-            )}
-          </>
-        )}
-      </S.MapTitle>
-      <S.MapContainer>
-        <KakaoMap
-          id="map"
-          center={center}
-          style={{ width: '100%', height: '370px' }}
-          level={4}
-          onCenterChanged={updateCenterWhenMapMoved}
-        >
-          <MapMarker
-            image={{
-              src: Marker,
-              size: { width: 30, height: 30 },
-            }}
-            position={position}
-          />
-          {data.map((item, index) => (
-              <EventMarkerContainer
-                  key={index}
-                  position={item.latlng}
-                  info={item} // 마커에 해당하는 정보 전달
-                  onMarkerClick={() => setSelectedSpot(item)} // 마커 클릭 시 상태 업데이트
-              />
-          ))}
-
-        </KakaoMap>
-        <S.LoctionBtn src={LocationBtn} onClick={setCenterToMyPosition} />
-      </S.MapContainer>
-      <div style={{ paddingBottom: '120px' }}>
-        {selectedSpot ? (
-            <S.SpotBox>
-              <div style={{ display: 'flex' }}>
-                <div style={{ fontWeight: '700', fontSize: '22px', marginTop: '6px' }}>
-                  {selectedSpot.name || selectedSpot.propertyName}
-                </div>
-
-                {/* ✅ 은행인 경우 카테고리 표시 */}
-                {selectedOption === 'bank' && (
-                    <S.Region>{selectedSpot.category}</S.Region>
+          ) : (
+              <>
+                {address ? (
+                    <>
+                      <span style={{ fontSize: '25px', fontWeight: '600' }}>{address}</span>
+                      <br />
+                      중심으로 필요한 정보가 있는 은행을 찾았어요!
+                    </>
+                ) : (
+                    '주소를 가져오는 중입니다!'
                 )}
-              </div>
-
-              {/* ✅ 주소 정보 처리 */}
-              <div style={{ fontSize: '17px', marginTop: '13px' }}>
-                {selectedSpot.address}
-              </div>
-
-              {/* ✅ 부동산인 경우 상세 주소 표시 */}
-              {selectedOption === 'mount' && selectedSpot.detailAddress && (
-                  <div style={{ fontSize: '17px', marginTop: '8px' }}>
-                    {selectedSpot.detailAddress}
+              </>
+          )}
+        </S.MapTitle>
+        <S.MapContainer>
+          <KakaoMap
+              id="map"
+              center={center}
+              style={{ width: '100%', height: '370px' }}
+              level={4}
+              onCenterChanged={updateCenterWhenMapMoved}
+          >
+            <MapMarker
+                image={{
+                  src: Marker,
+                  size: { width: 30, height: 30 },
+                }}
+                position={position}
+            />
+            {data.map((item, index) => (
+                <EventMarkerContainer
+                    key={index}
+                    position={item.latlng}
+                    info={item} // 마커에 해당하는 정보 전달
+                    onMarkerClick={() => setSelectedSpot(item)} // 마커 클릭 시 상태 업데이트
+                />
+            ))}
+          </KakaoMap>
+          <S.LoctionBtn src={LocationBtn} onClick={setCenterToMyPosition} />
+        </S.MapContainer>
+        <div style={{ paddingBottom: '120px' }}>
+          {selectedSpot ? (
+              <S.SpotBox>
+                <div style={{ display: 'flex' }}>
+                  <div style={{ fontWeight: '700', fontSize: '22px', marginTop: '6px' }}>
+                    {selectedSpot.name || selectedSpot.propertyName}
                   </div>
-              )}
-
-              {/* ✅ 전화번호 공통 표시 */}
-              <div style={{ fontSize: '17px', marginTop: '8px' }}>
-                전화번호 | {selectedSpot.phone || '정보 없음'}
-              </div>
-
-              {/* ✅ 은행인 경우 운영시간 표시 */}
-              {selectedOption === 'bank' && selectedSpot.operatingHours && (
-                  <div style={{ fontSize: '17px', marginTop: '8px' }}>
-                    운영시간 | {selectedSpot.operatingHours}
-                  </div>
-              )}
-
-              {/* ✅ 부동산인 경우 부동산 유형(propertyType) 표시 */}
-              {selectedOption === 'mount' && selectedSpot.propertyType && (
-                  <div style={{ fontSize: '17px', marginTop: '8px' }}>
-                    부동산 유형 | {selectedSpot.propertyType}
-                  </div>
-              )}
-            </S.SpotBox>
-        ) : (
-            <S.NoneSpot>
-              지도 위 마커를 클릭하면<br />정보가 출력돼요!
-            </S.NoneSpot>
-        )}
+                  {selectedOption === 'bank' && (
+                      <S.Region>{selectedSpot.category}</S.Region>
+                  )}
+                </div>
+                <div style={{ fontSize: '17px', marginTop: '13px' }}>
+                  {selectedSpot.address}
+                </div>
+                {selectedOption === 'mount' && selectedSpot.detailAddress && (
+                    <div style={{ fontSize: '17px', marginTop: '8px' }}>
+                      {selectedSpot.detailAddress}
+                    </div>
+                )}
+                <div style={{ fontSize: '17px', marginTop: '8px' }}>
+                  전화번호 | {selectedSpot.phone || '정보 없음'}
+                </div>
+                {selectedOption === 'bank' && selectedSpot.operatingHours && (
+                    <div style={{ fontSize: '17px', marginTop: '8px' }}>
+                      운영시간 | {selectedSpot.operatingHours}
+                    </div>
+                )}
+                {selectedOption === 'mount' && selectedSpot.propertyType && (
+                    <div style={{ fontSize: '17px', marginTop: '8px' }}>
+                      부동산 유형 | {selectedSpot.propertyType}
+                    </div>
+                )}
+              </S.SpotBox>
+          ) : (
+              <S.NoneSpot>
+                지도 위 마커를 클릭하면<br />정보가 출력돼요!
+              </S.NoneSpot>
+          )}
+        </div>
+        <Footer />
       </div>
-
-      <Footer />
-    </div>
   );
 }
 
