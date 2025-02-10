@@ -108,23 +108,6 @@ function Timer() {
     });
 }, []);
 
-// 로컬 api 테스트트
-// useEffect(() => {
-//   const fetchQuiz = async () => {
-//     try {
-//       const response = await axios.get('http://localhost:8081/quiz'); // 🟢 API 호출
-//       if (response.data.success) {
-//         setQuizList(response.data.response); // 🟢 퀴즈 데이터 저장
-//       }
-//     } catch (error) {
-//       console.error('Error fetching quiz:', error);
-//     }
-//   };
-
-//   fetchQuiz();
-// }, []); // 처음 한 번만 실행
-
-  
   // 시작 전 인스로 텍스트 & 3초 타이머
   useEffect(() => {
     
@@ -165,7 +148,10 @@ function Timer() {
             문제 {currentQuizIndex + 1} / {quizList.length}
           </S.SetBox>
           <S.ExerciseBox>
-            {quizList[currentQuizIndex].question}
+            {/* {quizList[currentQuizIndex].question} */}
+            {quizList.length > 0 && quizList[currentQuizIndex]
+    ? quizList[currentQuizIndex].question
+    : '퀴즈 데이터를 불러오는 중...'}
           </S.ExerciseBox>
           <div style={{display: 'flex', justifyContent: 'center', padding: '30px'}}>
             <S.QuizButton onClick={() => handleAnswer('1번(O)')}>⭕</S.QuizButton>
