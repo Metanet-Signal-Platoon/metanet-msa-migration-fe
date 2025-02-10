@@ -29,6 +29,7 @@ function Community() {
           limit: 50,
           offset: 20,
         },
+        withCredentials: false
       })
       .then((response) => {
         const data = response.data;
