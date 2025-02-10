@@ -54,8 +54,8 @@ function Map() {
         } else {
           url = `/api/real-estate`;
         }
-        const fullurl = `${backApi}${url}`;
-        console.log(fullurl);
+        const baseurl = backApi();
+        const fullurl = `${baseurl}${url}`;
         const response = await fetch(fullurl);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
