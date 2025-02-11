@@ -13,7 +13,7 @@ function SignIn5() {
 
   return (
     <S.Component>
-      <S.ServiceText>저희와 함께<br/>자신에게 꼭 맞는 운동을<br/>시작해보세요!</S.ServiceText>
+      <S.ServiceText>저희와 함께<br/>맞춤형 금융 활동을<br/>시작해보세요!</S.ServiceText>
       <S.NextBtn onClick={onClickNextBtn}>시작하기</S.NextBtn>
     </S.Component>
   )

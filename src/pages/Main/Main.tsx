@@ -27,25 +27,25 @@ function Main() {
 
       <S.SubHeader>
         <S.HeaderText1>안녕하세요! {localStorage.getItem('user_id')}님,</S.HeaderText1>
-        <S.HeaderText2>원하시는 서비스를 확인해 주세요.</S.HeaderText2>
+        <S.HeaderText2>원하시는 금융 서비스를 확인해 주세요.</S.HeaderText2>
       </S.SubHeader>
 
       <S.MainContainer>
         <S.Service1 onClick={onClickMenu1}>
-          <S.ServiceTitle>맞춤형 운동 추천</S.ServiceTitle>
-          <S.ServiceText>사용자 정보를 바탕으로 맞춤형 운동을<br/>추천받을 수 있어요.</S.ServiceText>
+          <S.ServiceTitle>오늘의 금융 Quiz</S.ServiceTitle>
+          <S.ServiceText>오늘의 금융 Quiz를 풀고<br/>금융 상식을 키워보세요!</S.ServiceText>
           <S.ServiceIcon><ArrowIcon/></S.ServiceIcon>
         </S.Service1>
 
         <S.Service3 onClick={onClickMenu2}>
-          <S.ServiceTitle>운동 프로그램 위치</S.ServiceTitle>
-          <S.ServiceText>공공/사설에서 운영하는 운동프로그램<br/>위치를 검색할 수 있어요.</S.ServiceText>
+          <S.ServiceTitle>은행과 부동산 위치</S.ServiceTitle>
+          <S.ServiceText>전세 대출이 가능한 은행 위치와 근처 부동산의 위치를 검색할 수 있어요.</S.ServiceText>
           <S.ServiceIcon><ArrowIcon/></S.ServiceIcon>
         </S.Service3>
 
         <S.Service2 onClick={onClickMenu3}>
-          <S.ServiceTitle>운동 동호회</S.ServiceTitle>
-          <S.ServiceText>다양한 사람들과 같이 즐길 수 있는<br/>운동 동호회를 모집하고 찾을 수 있어요.</S.ServiceText>
+          <S.ServiceTitle>전세 매물</S.ServiceTitle>
+          <S.ServiceText>다양한 전세 매물이 있어<br/>원하는 매물을 찾을 수 있어요.</S.ServiceText>
           <S.ServiceIcon><ArrowIcon/></S.ServiceIcon>
         </S.Service2>
       </S.MainContainer>

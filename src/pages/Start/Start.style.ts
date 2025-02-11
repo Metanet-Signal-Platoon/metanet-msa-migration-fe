@@ -9,13 +9,15 @@ export const ServiceText = styled.div`
 `;
 
 export const ImageBox = styled.div`
-    
     position: fixed;
-    left: 50%;
-    bottom: 38%;
+    left: 42%;
+    bottom: 70%;
     transform: translateX(-50%);
     cursor: pointer;
+    width: 50px;  /* 원하는 크기로 조정 */
+    height: 50px; /* 원하는 크기로 조정 */
 `;
+
 
 // 로그인 버튼
 export const LoginBtn = styled.div`

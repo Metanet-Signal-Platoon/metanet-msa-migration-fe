@@ -41,14 +41,9 @@ function Community() {
       });
   }, []);
 
-  // 등록 버튼 클릭 시
-  function onClickInsertBtn() {
-    navigate('/community-insert');
-  }
-
   return (
     <S.Component>
-      <Header text={"운동 동호회"} />
+      <Header text={"요청하신 전세 매물입니다!"} />
 
       {/* 동호회 리스트 출력 */}
       <S.ListContainer>
@@ -101,9 +96,6 @@ function Community() {
         </S.ListContainer>
 
       {/* 등록 버튼 */}
-      <S.InsertBtn onClick={onClickInsertBtn}>
-        <InsertBtn />
-      </S.InsertBtn>
 
       <Footer />
     </S.Component>
@@ -111,4 +103,3 @@ function Community() {
 }
 
 export default Community;
-
