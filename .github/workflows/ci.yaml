@@ -121,3 +121,4 @@ jobs:
             git commit -m "Update image tag and valueFiles to ${{ env.VALUE_FILE_NAME }} in ${{ env.APP_FILE }}"
             git push origin main  # ✅ 항상 main 브랜치로 푸시
           fi
+
