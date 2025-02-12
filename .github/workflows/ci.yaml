@@ -95,10 +95,16 @@ jobs:
           echo "Updating valueFiles in ${{ env.APP_FILE }}"
 
           # `valueFiles:` 부분을 찾아서 올바른 values-{BRANCH}.yaml로 변경
-          sed -i "s|valueFiles:\s*-.*|valueFiles:\n      - ${{ env.VALUE_FILE_NAME }}|" "${{ env.APP_FILE }}"
+          sed -i "/valueFiles:/ {n; s|- .*|- ${{ env.VALUE_FILE_NAME }}|}" "${{ env.APP_FILE }}"
 
           echo "=== Updated application.yaml ==="
           cat "${{ env.APP_FILE }}"
+
+      - name: Verify Changes Before Commit
+        run: |
+          echo "Checking for modified files..."
+          git status
+          git diff
 
       - name: Commit and Push Changes
         run: |
