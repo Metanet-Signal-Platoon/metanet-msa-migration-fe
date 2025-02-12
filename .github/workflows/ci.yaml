@@ -51,7 +51,7 @@ jobs:
         with:
           repository: Metanet-Signal-Platoon/ArgoCD-metabank
           token: ${{ secrets.GH_PAT }}
-          ref: ${{ github.ref_name }}  # ✅ 현재 브랜치 체크아웃
+          ref: main  # ✅ 현재 브랜치 체크아웃
           fetch-depth: 0  
 
       - name: Set Environment Variables Based on Branch
