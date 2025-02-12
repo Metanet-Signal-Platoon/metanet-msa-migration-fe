@@ -94,10 +94,12 @@ jobs:
           echo "Updating image tag in ${{ env.VALUES_FILE }}"
           sed -i "s|tag: .*|tag: \"${{ env.TAG }}\"|" "${{ env.VALUES_FILE }}"
 
-      - name: Update valueFiles in application.yaml
+      - name: Update valueFiles in application.yaml (Ensure Only One values File)
         run: |
           echo "Updating valueFiles in ${{ env.APP_FILE }}"
-          sed -i "s|valueFiles:.*|valueFiles:\\n      - ${{ env.VALUE_FILE_NAME }}|" "${{ env.APP_FILE }}"
+          
+          # `valueFiles:` 부분을 찾아서 현재 값들을 제거하고 새 값으로 설정
+          sed -i "/valueFiles:/,/helm:/c\      valueFiles:\n      - ${{ env.VALUE_FILE_NAME }}" "${{ env.APP_FILE }}"
 
           echo "=== Updated application.yaml ==="
           cat "${{ env.APP_FILE }}"
