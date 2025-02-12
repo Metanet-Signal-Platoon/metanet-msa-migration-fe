@@ -52,40 +52,48 @@ jobs:
       - name: Check File Path
         run: ls -R
 
-      - name: Find application.yaml File
+      - name: Find Deployment File
         run: |
-          APP_FILE="argo-metanet-msa-migration-fe-dev/templates/application.yaml"
+          FILE_PATH="argo-metanet-msa-migration-fe/deployment.yaml"
 
-          if [ ! -f "$APP_FILE" ]; then
-            echo "Error: application.yaml not found!"
+          if [ ! -f "$FILE_PATH" ]; then
+            echo "Error: deployment.yaml not found!"
             exit 1
           fi
 
-          echo "Found application.yaml: $APP_FILE"
-          echo "APP_FILE=$APP_FILE" >> $GITHUB_ENV
+          echo "Found deployment file: $FILE_PATH"
+          echo "DEPLOYMENT_FILE=$FILE_PATH" >> $GITHUB_ENV
 
-      - name: Update valueFiles in application.yaml (Ensure Only values-prod.yaml)
+      - name: Update Image in Deployment File
         run: |
-          echo "Updating valueFiles in ${{ env.APP_FILE }}"
+          if [ -f "${{ env.DEPLOYMENT_FILE }}" ]; then
+            echo "Updating image in ${{ env.DEPLOYMENT_FILE }}"
+            sed -i "s|image: ykim73094/metanet-msa-migration-fe:.*|image: ykim73094/metanet-msa-migration-fe:${{ env.TAG }}|" "${{ env.DEPLOYMENT_FILE }}"
 
-          # 기존 valueFiles 리스트를 삭제하고 values-prod.yaml만 유지
-          sed -i '/valueFiles:/,/helm:/c\      valueFiles:\n      - values-prod.yaml' "${{ env.APP_FILE }}"
+            # 변경 사항 확인
+            git diff "${{ env.DEPLOYMENT_FILE }}"
 
-          echo "=== Updated application.yaml ==="
-          cat "${{ env.APP_FILE }}"
+            if git diff --quiet "${{ env.DEPLOYMENT_FILE }}"; then
+              echo "No changes detected in ${{ env.DEPLOYMENT_FILE }}"
+              exit 0  # 변경 사항이 없으면 오류 없이 종료
+            fi
+          else
+            echo "Error: deployment.yaml not found!"
+            exit 1
+          fi
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           
-          git add "${{ env.APP_FILE }}"
+          git add "${{ env.DEPLOYMENT_FILE }}"
 
-          # 변경 사항이 있는 경우에만 푸시
+          # 변경 사항이 있을 경우에만 commit & push 수행
           if git diff --staged --quiet; then
             echo "No changes to commit"
-            exit 0
+            exit 0  # 변경 사항이 없으면 정상 종료
           else
-            git commit -m "Ensure only values-prod.yaml in application.yaml"
+            git commit -m "Update image to ykim73094/metanet-msa-migration-fe:${{ env.TAG }}"
             git push origin main
           fi
