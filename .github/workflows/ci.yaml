@@ -57,7 +57,7 @@ jobs:
       - name: Set Environment Variables Based on Branch
         run: |
           # 디렉토리는 고정
-          BASE_DIR="argo-metanet-msa-migration-fe-dev"
+          BASE_DIR="argo-metanet-msa-migration-fe-helm"
           echo "BASE_DIR=$BASE_DIR" >> $GITHUB_ENV
 
           # 브랜치별 values 파일 설정
