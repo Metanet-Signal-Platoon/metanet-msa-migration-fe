@@ -46,32 +46,33 @@ jobs:
             metabank.azurecr.io/metanet-msa-migration-fe:latest
             metabank.azurecr.io/metanet-msa-migration-fe:${{ env.TAG }}
 
-      - name: Checkout ArgoCD Repository
+      - name: Checkout ArgoCD Repository (Always use main)
         uses: actions/checkout@v3
         with:
           repository: Metanet-Signal-Platoon/ArgoCD-metabank
           token: ${{ secrets.GH_PAT }}
-          ref: main  # ✅ 현재 브랜치 체크아웃
+          ref: main  # ✅ 항상 main 브랜치를 체크아웃
           fetch-depth: 0  
 
       - name: Set Environment Variables Based on Branch
         run: |
+          BASE_DIR="argo-metanet-msa-migration-fe-dev"
+
           if [[ "${{ github.ref_name }}" == "dev" ]]; then
-            echo "VALUES_FILE=argo-metanet-msa-migration-fe-dev/values-dev.yaml" >> $GITHUB_ENV
-            echo "APP_FILE=argo-metanet-msa-migration-fe-dev/application.yaml" >> $GITHUB_ENV
+            echo "VALUES_FILE=$BASE_DIR/values-dev.yaml" >> $GITHUB_ENV
             echo "VALUE_FILE_NAME=values-dev.yaml" >> $GITHUB_ENV
           elif [[ "${{ github.ref_name }}" == "qa" ]]; then
-            echo "VALUES_FILE=argo-metanet-msa-migration-fe-qa/values-qa.yaml" >> $GITHUB_ENV
-            echo "APP_FILE=argo-metanet-msa-migration-fe-qa/application.yaml" >> $GITHUB_ENV
+            echo "VALUES_FILE=$BASE_DIR/values-qa.yaml" >> $GITHUB_ENV
             echo "VALUE_FILE_NAME=values-qa.yaml" >> $GITHUB_ENV
           elif [[ "${{ github.ref_name }}" == "prod" ]]; then
-            echo "VALUES_FILE=argo-metanet-msa-migration-fe-prod/values-prod.yaml" >> $GITHUB_ENV
-            echo "APP_FILE=argo-metanet-msa-migration-fe-prod/application.yaml" >> $GITHUB_ENV
+            echo "VALUES_FILE=$BASE_DIR/values-prod.yaml" >> $GITHUB_ENV
             echo "VALUE_FILE_NAME=values-prod.yaml" >> $GITHUB_ENV
           else
             echo "Invalid branch. Exiting..."
             exit 1
           fi
+
+          echo "APP_FILE=$BASE_DIR/application.yaml" >> $GITHUB_ENV
 
       - name: Check File Paths
         run: |
@@ -113,5 +114,5 @@ jobs:
             exit 0
           else
             git commit -m "Update image tag and valueFiles to ${{ env.VALUE_FILE_NAME }} in ${{ env.APP_FILE }}"
-            git push origin main  # ✅ 현재 브랜치로 푸시
+            git push origin main  # ✅ 항상 main 브랜치로 푸시
           fi
