@@ -113,5 +113,5 @@ jobs:
             exit 0
           else
             git commit -m "Update image tag and valueFiles to ${{ env.VALUE_FILE_NAME }} in ${{ env.APP_FILE }}"
-            git push origin ${{ github.ref_name }}  # ✅ 현재 브랜치로 푸시
+            git push origin main  # ✅ 현재 브랜치로 푸시
           fi
