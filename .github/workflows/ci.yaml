@@ -56,23 +56,21 @@ jobs:
 
       - name: Set Environment Variables Based on Branch
         run: |
-          BASE_DIR="argo-metanet-msa-migration-fe-dev"
-
+          # 브랜치별 ArgoCD 디렉토리 경로 설정
           if [[ "${{ github.ref_name }}" == "dev" ]]; then
-            echo "VALUES_FILE=$BASE_DIR/values-dev.yaml" >> $GITHUB_ENV
-            echo "VALUE_FILE_NAME=values-dev.yaml" >> $GITHUB_ENV
+            BASE_DIR="argo-metanet-msa-migration-fe-dev"
           elif [[ "${{ github.ref_name }}" == "qa" ]]; then
-            echo "VALUES_FILE=$BASE_DIR/values-qa.yaml" >> $GITHUB_ENV
-            echo "VALUE_FILE_NAME=values-qa.yaml" >> $GITHUB_ENV
+            BASE_DIR="argo-metanet-msa-migration-fe-qa"
           elif [[ "${{ github.ref_name }}" == "prod" ]]; then
-            echo "VALUES_FILE=$BASE_DIR/values-prod.yaml" >> $GITHUB_ENV
-            echo "VALUE_FILE_NAME=values-prod.yaml" >> $GITHUB_ENV
+            BASE_DIR="argo-metanet-msa-migration-fe-prod"
           else
             echo "Invalid branch. Exiting..."
             exit 1
           fi
 
-          # application.yaml 경로 지정
+          echo "BASE_DIR=$BASE_DIR" >> $GITHUB_ENV
+          echo "VALUES_FILE=$BASE_DIR/values-${{ github.ref_name }}.yaml" >> $GITHUB_ENV
+          echo "VALUE_FILE_NAME=values-${{ github.ref_name }}.yaml" >> $GITHUB_ENV
           echo "APP_FILE=$BASE_DIR/templates/application.yaml" >> $GITHUB_ENV
 
       - name: Check File Paths
@@ -98,7 +96,7 @@ jobs:
         run: |
           echo "Updating valueFiles in ${{ env.APP_FILE }}"
 
-          # 기존 valueFiles 값을 찾아서 대체
+          # `valueFiles:` 부분을 찾아서 올바른 values-{BRANCH}.yaml로 변경
           sed -i "s|valueFiles:\s*-.*|valueFiles:\n      - ${{ env.VALUE_FILE_NAME }}|" "${{ env.APP_FILE }}"
 
           echo "=== Updated application.yaml ==="
