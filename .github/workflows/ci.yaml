@@ -51,26 +51,27 @@ jobs:
         with:
           repository: Metanet-Signal-Platoon/ArgoCD-metabank
           token: ${{ secrets.GH_PAT }}
-          ref: ${{ github.ref_name }}  # ✅ 현재 브랜치를 체크아웃
+          ref: ${{ github.ref_name }}  # ✅ 현재 브랜치 체크아웃
           fetch-depth: 0  
 
       - name: Set Environment Variables Based on Branch
         run: |
-          case "${{ github.ref_name }}" in
-            "dev")
-              echo "VALUES_FILE=argo-metanet-msa-migration-fe-dev/values-dev.yaml" >> $GITHUB_ENV
-              ;;
-            "qa")
-              echo "VALUES_FILE=argo-metanet-msa-migration-fe-qa/values-qa.yaml" >> $GITHUB_ENV
-              ;;
-            "prod")
-              echo "VALUES_FILE=argo-metanet-msa-migration-fe-prod/values-prod.yaml" >> $GITHUB_ENV
-              ;;
-            *)
-              echo "Invalid branch. Exiting..."
-              exit 1
-              ;;
-          esac
+          if [[ "${{ github.ref_name }}" == "dev" ]]; then
+            echo "VALUES_FILE=argo-metanet-msa-migration-fe-dev/values-dev.yaml" >> $GITHUB_ENV
+            echo "APP_FILE=argo-metanet-msa-migration-fe-dev/application.yaml" >> $GITHUB_ENV
+            echo "VALUE_FILE_NAME=values-dev.yaml" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "qa" ]]; then
+            echo "VALUES_FILE=argo-metanet-msa-migration-fe-qa/values-qa.yaml" >> $GITHUB_ENV
+            echo "APP_FILE=argo-metanet-msa-migration-fe-qa/application.yaml" >> $GITHUB_ENV
+            echo "VALUE_FILE_NAME=values-qa.yaml" >> $GITHUB_ENV
+          elif [[ "${{ github.ref_name }}" == "prod" ]]; then
+            echo "VALUES_FILE=argo-metanet-msa-migration-fe-prod/values-prod.yaml" >> $GITHUB_ENV
+            echo "APP_FILE=argo-metanet-msa-migration-fe-prod/application.yaml" >> $GITHUB_ENV
+            echo "VALUE_FILE_NAME=values-prod.yaml" >> $GITHUB_ENV
+          else
+            echo "Invalid branch. Exiting..."
+            exit 1
+          fi
 
       - name: Check File Paths
         run: |
@@ -78,34 +79,39 @@ jobs:
             echo "Error: values.yaml not found at ${{ env.VALUES_FILE }}"
             exit 1
           fi
-
-          echo "Found values file: ${{ env.VALUES_FILE }}"
-
-      - name: Update Image in Values File
-        run: |
-          if [ -f "${{ env.VALUES_FILE }}" ]; then
-            echo "Updating image tag in ${{ env.VALUES_FILE }}"
-            sed -i "s|tag: .*|tag: \"${{ env.TAG }}\"|" "${{ env.VALUES_FILE }}"
-          else
-            echo "Error: values file not found!"
+          if [ ! -f "${{ env.APP_FILE }}" ]; then
+            echo "Error: application.yaml not found at ${{ env.APP_FILE }}"
             exit 1
           fi
 
-          # 변경 사항 확인
-          git diff
+          echo "Found values file: ${{ env.VALUES_FILE }}"
+          echo "Found application file: ${{ env.APP_FILE }}"
+
+      - name: Update Image in Values File
+        run: |
+          echo "Updating image tag in ${{ env.VALUES_FILE }}"
+          sed -i "s|tag: .*|tag: \"${{ env.TAG }}\"|" "${{ env.VALUES_FILE }}"
+
+      - name: Update valueFiles in application.yaml
+        run: |
+          echo "Updating valueFiles in ${{ env.APP_FILE }}"
+          sed -i "s|valueFiles:.*|valueFiles:\\n      - ${{ env.VALUE_FILE_NAME }}|" "${{ env.APP_FILE }}"
+
+          echo "=== Updated application.yaml ==="
+          cat "${{ env.APP_FILE }}"
 
       - name: Commit and Push Changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           
-          git add "${{ env.VALUES_FILE }}"
+          git add "${{ env.VALUES_FILE }}" "${{ env.APP_FILE }}"
 
           # 변경 사항이 있는 경우에만 푸시
           if git diff --staged --quiet; then
             echo "No changes to commit"
             exit 0
           else
-            git commit -m "Update image tag to ${{ env.TAG }} in ${{ env.VALUES_FILE }}"
+            git commit -m "Update image tag and valueFiles to ${{ env.VALUE_FILE_NAME }} in ${{ env.APP_FILE }}"
             git push origin ${{ github.ref_name }}  # ✅ 현재 브랜치로 푸시
           fi
