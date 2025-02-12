@@ -72,7 +72,8 @@ jobs:
             exit 1
           fi
 
-          echo "APP_FILE=$BASE_DIR/application.yaml" >> $GITHUB_ENV
+          # application.yaml 경로 지정
+          echo "APP_FILE=$BASE_DIR/templates/application.yaml" >> $GITHUB_ENV
 
       - name: Check File Paths
         run: |
