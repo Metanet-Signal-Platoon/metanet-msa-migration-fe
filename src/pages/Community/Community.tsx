@@ -91,7 +91,13 @@ function Community() {
             </S.ListItem>
           ))
         ) : (
-          <p>목록을 불러오는 중입니다…</p>
+          <S.LoadingContainer>
+            <S.LoadingMessage>
+              <Running style={{ width: '50px', height: '50px', marginBottom: '15px' }}/>
+              <p>현재 시스템 점검 중입니다.</p>
+              <p>잠시만 기다려주세요.</p>
+            </S.LoadingMessage>
+          </S.LoadingContainer>
         )}
         </S.ListContainer>
 
