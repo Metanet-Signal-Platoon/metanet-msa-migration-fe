@@ -93,7 +93,12 @@ function Community() {
         ) : (
           <S.LoadingContainer>
             <S.LoadingMessage>
-              <Running style={{ width: '50px', height: '50px', marginBottom: '15px' }}/>
+              <Running style={{ 
+                width: '40px', 
+                height: '40px',
+                display: 'block',
+                marginBottom: '10px'
+              }}/>
               <p>현재 시스템 점검 중입니다.</p>
               <p>잠시만 기다려주세요.</p>
             </S.LoadingMessage>
