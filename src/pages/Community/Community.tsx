@@ -99,8 +99,9 @@ function Community() {
                 display: 'block',
                 marginBottom: '10px'
               }}/>
-              <p>현재 시스템 점검 중입니다.</p>
-              <p>잠시만 기다려주세요.</p>
+              <p>현재 시스템 점검 중입니다.<br/>
+                  잠시만 기다려주세요.
+              </p>
             </S.LoadingMessage>
           </S.LoadingContainer>
         )}
