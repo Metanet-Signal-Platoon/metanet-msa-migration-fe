@@ -28,33 +28,31 @@ export const ListItem = styled.div`
 `;
 
 export const LoadingContainer = styled.div`
-  width: 100%;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 400px;
+  width: 100%;
 `;
 
 export const LoadingMessage = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  svg {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 15px;
-    animation: spin 1s linear infinite;
-  }
+  padding: 30px;
 
   p {
     margin: 5px 0;
-    font-size: 16px;
+    font-size: 18px;
     color: #666;
+    text-align: center;
   }
 
-  @keyframes spin {
+  svg {
+    animation: rotate 2s linear infinite;
+  }
+
+  @keyframes rotate {
     from {
       transform: rotate(0deg);
     }
