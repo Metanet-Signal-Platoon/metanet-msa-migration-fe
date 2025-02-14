@@ -29,7 +29,7 @@ export const ListItem = styled.div`
 
 export const LoadingContainer = styled.div`
   width: 100%;
-  height: calc(100vh - 200px);
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -40,21 +40,18 @@ export const LoadingMessage = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: white;
-  border-radius: 15px;
-  padding: 30px 50px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
   svg {
+    width: 40px;
+    height: 40px;
     margin-bottom: 15px;
-    animation: spin 1.5s linear infinite;
+    animation: spin 1s linear infinite;
   }
 
   p {
     margin: 5px 0;
     font-size: 16px;
     color: #666;
-    text-align: center;
   }
 
   @keyframes spin {
