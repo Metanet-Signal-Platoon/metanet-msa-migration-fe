@@ -31,31 +31,27 @@ export const LoadingContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 400px;
-  width: 100%;
+  height: 300px;
 `;
 
 export const LoadingMessage = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 30px;
-  background-color: #f5f5f5;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 20px;
 
   p {
     margin: 5px 0;
-    font-size: 18px;
+    font-size: 16px;
     color: #666;
-    text-align: center;
   }
 
   svg {
-    animation: rotate 2s linear infinite;
+    animation: spin 1.5s linear infinite;
   }
 
-  @keyframes rotate {
+  @keyframes spin {
     from {
       transform: rotate(0deg);
     }
